@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         goToLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         registerButton.setOnClickListener {
