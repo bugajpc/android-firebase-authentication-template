@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         auth = Firebase.auth
 
         val currentUser = auth.currentUser
+        val db = Firebase.firestore
 
         val emailEdit: EditText = findViewById(R.id.email_editText)
         val passwordEdit: EditText = findViewById(R.id.password_editText)
@@ -46,6 +48,21 @@ class MainActivity : AppCompatActivity() {
                             "Hello:"+user!!.email.toString(),
                             Toast.LENGTH_SHORT,
                         ).show()
+
+                        val newUser = hashMapOf(
+                            "name" to user.email
+                        )
+
+                        db.collection("users").document(user.uid)
+                            .set(newUser)
+                            .addOnSuccessListener {
+                                Log.d("TAG", "DocumentSnapshot successfully written!")
+                                val intent = Intent(this, HomeActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+                            .addOnFailureListener { e -> Log.w("TAG", "Error writing document", e) }
+
 
                     } else {
                         // If sign in fails, display a message to the user.
